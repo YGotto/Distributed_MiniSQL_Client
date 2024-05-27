@@ -63,6 +63,7 @@ public class Client {
             if (statement instanceof Select) {
                 Select selectStatement = (Select) statement;
                 result = ((PlainSelect) selectStatement.getSelectBody()).getFromItem().toString();
+                //System.out.println(result);
             } else if (statement instanceof Insert) {
                 Insert insertStatement = (Insert) statement;
                 result = insertStatement.getTable().getName();
@@ -141,13 +142,13 @@ public class Client {
         } else { // 非 create 命令, 查找对应的 table 所在的 region
             tableName = getTableFromSql(sql);
             if (tableName == null) {
-                System.out.println("No table in sql! CMD abort!");
+                System.out.println("No table in sql!");
                 return;
             }
             url = buffer.getRegionUrl(tableName);
             // 检查 Buffer 内是否含有该 table
             if (url == null) {
-                System.out.println("INFO: table name not found in buffer!");
+                System.out.println("INFO: Table name not found in buffer!");
                 System.out.println("INFO: Buffer will be refreshed!");
                 buffer.refreshBuffer();
                 url = buffer.getRegionUrl(tableName);
@@ -189,7 +190,7 @@ public class Client {
                         System.out.println(result.getString("selectResult"));
                     } else {
                         System.out.println(result.getString("selectResult"));
-                        //selectPrint(result.getString("selectResult"));
+                        selectPrint(result.getString("selectResult"));
                     }
                 }
             } else {
@@ -213,30 +214,23 @@ public class Client {
             JsonNode fieldsNode = msgNode.get("fields");
             JsonNode dataNode = msgNode.get("data");
 
-            // 提取字段名
-            List<String> fields = new ArrayList<>();
-            for (JsonNode fieldNode : fieldsNode) {
-                fields.add(fieldNode.asText());
+            // 打印字段名
+            for (JsonNode field : fieldsNode) {
+                System.out.print(field.asText() + "\t");
             }
-
-            // 提取数据行
-            List<Map<String, String>> rows = new ArrayList<>();
-            for (JsonNode tupleNode : dataNode) {
-                rows.add(objectMapper.convertValue(tupleNode, Map.class));
+            System.out.println();
+            // 打印分隔线
+            for (JsonNode field : fieldsNode) {
+                System.out.print("--------");
             }
-
-            // 将数据转换为二维数组
-            String[][] tableRows = new String[rows.size()][fields.size()];
-            for (int i = 0; i < rows.size(); i++) {
-                Map<String, String> row = rows.get(i);
-                for (int j = 0; j < fields.size(); j++) {
-                    tableRows[i][j] = row.get(fields.get(j)).toString();
+            System.out.println();
+            // 打印数据
+            for (JsonNode dataEntry : dataNode) {
+                for (JsonNode field : fieldsNode) {
+                    System.out.print(dataEntry.get(field.asText()).asText() + "\t");
                 }
+                System.out.println();
             }
-
-            // 打印表格
-            String table = AsciiTable.getTable(fields.toArray(new String[0]), tableRows);
-            System.out.println(table);
 
         } catch (IOException e) {
             System.err.println("ERROR: Failed to parse JSON message: " + e.getMessage());

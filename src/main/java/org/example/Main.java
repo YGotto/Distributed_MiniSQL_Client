@@ -14,9 +14,9 @@ public class Main {
     public static void printHelp() {
         System.out.println("-------------Help---------------");
         System.out.println("input 'q' to quit");
-        System.out.println("input 'h' or 'help' to get help");
+        System.out.println("input 'h' to get help");
         System.out.println("input 'b' to check buffer");
-        System.out.println("input 'r' to refresh buffer manually");
+        System.out.println("input 'r' to refresh buffer");
         System.out.println("input sql to exec");
         System.out.println("--------------------------------");
     }
@@ -33,11 +33,11 @@ public class Main {
             System.out.print("\ncmd: ");
             String cmd = scanner.nextLine().trim().toLowerCase();
 
-            if (cmd.equals("h") || cmd.equals("help")) {
+            if (cmd.equals("h")) {
                 printHelp();
             } else if (cmd.equals("q")) {
                 client.close();
-                System.out.println("Bye!");
+                System.out.println("Client close.");
                 break;
             } else if (cmd.equals("b")) {
                 client.printBuffer();
