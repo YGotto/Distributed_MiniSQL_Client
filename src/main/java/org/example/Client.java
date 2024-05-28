@@ -207,7 +207,7 @@ public class Client {
         }
     }
     public void selectPrint(String msg) {
-        System.out.println(msg);
+        //System.out.println(msg);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             JsonNode msgNode = objectMapper.readTree(msg);
